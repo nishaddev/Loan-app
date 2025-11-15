@@ -217,7 +217,7 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
-              <p className="text-gray-500 text-sm mt-1">Welcome to ICC Financial Service Management</p>
+              <p className="text-gray-500 text-sm mt-1">Welcome to THE WORLD BANK Financial Service Management</p>
             </div>
             <div className="flex items-center space-x-4">
               <div className="bg-blue-50 px-4 py-2 rounded-lg">

@@ -310,7 +310,7 @@ export default function MoneyReceiptPage() {
               <div class="header">
                 <div class="logo-block">
                   <div class="logo-text">
-                    <div>ICC</div>
+                    <div>THE WORLD BANK</div>
                     <div>Bangladesh</div>
                   </div>
                   <div class="logo-bars">
@@ -551,7 +551,7 @@ export default function MoneyReceiptPage() {
               <div class="header">
                 <div class="logo-block">
                   <div class="logo-text">
-                    <div>ICC</div>
+                    <div>THE WORLD BANK</div>
                     <div>Bangladesh</div>
                   </div>
                   <div class="logo-bars">
@@ -643,7 +643,7 @@ export default function MoneyReceiptPage() {
                 {/* Logo Block */}
                 <div className="flex items-center">
                   <div className="mr-6">
-                    <div className="font-bold text-[22px]">ICC</div>
+                    <div className="font-bold text-[22px]">THE WORLD BANK</div>
                     <div className="text-[12px]">Bangladesh</div>
                   </div>
                   <div className="flex">

@@ -56,7 +56,7 @@ export function AdminSidebar() {
     <aside className="w-64 bg-white min-h-screen p-6 flex flex-col shadow-lg border-r border-gray-200">
       <div className="flex items-center gap-3 mb-8">
         <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center font-bold text-white shadow-sm">
-          ICC
+          THE WORLD BANK
         </div>
         <div>
           <h1 className="text-xl font-bold text-gray-800">Admin Panel</h1>
