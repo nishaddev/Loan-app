@@ -15,6 +15,7 @@ interface Customer {
   phone: string
   personalInfo?: Record<string, any>
   bankInfo?: Record<string, any>
+  applicationDate?: string
 }
 
 export default function CustomersPage() {
@@ -46,9 +47,16 @@ export default function CustomersPage() {
         const data = await response.json()
         
         if (response.ok) {
-          setCustomers(data)
-          setFilteredCustomers(data)
-          setTotalCustomers(data.length)
+          // Sort customers by application date (newest first)
+          const sortedCustomers = [...data].sort((a: Customer, b: Customer) => {
+            const dateA = a.applicationDate ? new Date(a.applicationDate).getTime() : 0
+            const dateB = b.applicationDate ? new Date(b.applicationDate).getTime() : 0
+            return dateB - dateA
+          })
+          
+          setCustomers(sortedCustomers)
+          setFilteredCustomers(sortedCustomers)
+          setTotalCustomers(sortedCustomers.length)
           setError(null)
         } else {
           const errorData = await response.json()
@@ -384,6 +392,7 @@ export default function CustomersPage() {
                           <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mobile</th>
                           <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NID</th>
                           <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Occupation</th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Application Date</th>
                           <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                       </thead>
@@ -398,6 +407,11 @@ export default function CustomersPage() {
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.personalInfo?.mobileNumber || customer.phone || "N/A"}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.personalInfo?.nidNumber || "N/A"}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{customer.personalInfo?.occupation || "N/A"}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {customer.applicationDate 
+                                ? new Date(customer.applicationDate).toLocaleDateString('en-GB') 
+                                : "N/A"}
+                            </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                               <div className="flex justify-end space-x-2">
                                 <Button 

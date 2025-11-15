@@ -21,6 +21,7 @@ const menuItems = [
       { label: "Approval", href: "/admin/files/approval" },
     ]
   },
+  { label: "Transfer Number", href: "/admin/transfer-number" },
   { label: "Create Admin", href: "/admin/create-admin" },
 ]
 

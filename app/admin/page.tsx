@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { AdminSidebar } from "@/components/admin-sidebar"
 import { Card } from "@/components/ui/card"
+import { convertToBanglaDigits } from "@/lib/utils"
 
 interface DashboardStats {
   totalMembers: number
@@ -302,7 +303,7 @@ export default function AdminDashboard() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className={`text-xs font-semibold text-${item.color}-600 uppercase tracking-wide`}>{item.label}</p>
-                          <p className="text-xl font-bold text-gray-800 mt-1 animate-countUp">{item.value.toLocaleString()}</p>
+                          <p className="text-xl font-bold text-gray-800 mt-1 animate-countUp">{convertToBanglaDigits(item.value.toLocaleString())}</p>
                         </div>
                         <span className={`text-xl text-${item.color}-500`}>{item.icon}</span>
                       </div>

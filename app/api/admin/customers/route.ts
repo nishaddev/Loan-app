@@ -9,7 +9,14 @@ export async function GET(request: NextRequest) {
 
     const allUsers = await loans.find({}).toArray()
     
-    return NextResponse.json(allUsers, { status: 200 })
+    // Format the data and add applicationDate field
+    const formattedUsers = allUsers.map(user => ({
+      ...user,
+      _id: user._id.toString(),
+      applicationDate: user.applicationDate || user.createdAt || null
+    }))
+    
+    return NextResponse.json(formattedUsers, { status: 200 })
   } catch (error) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }

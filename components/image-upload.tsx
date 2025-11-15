@@ -5,6 +5,7 @@ import type React from "react"
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import { X } from "lucide-react"
 
 interface ImageUploadProps {
   label: string
@@ -54,6 +55,15 @@ export function ImageUpload({ label, onUpload, isLoading }: ImageUploadProps) {
     }
   }
 
+  const removeImage = () => {
+    setPreview(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+    // Reset error when removing image
+    setError("")
+  }
+
   return (
     <div className="space-y-3">
       <label className="text-sm font-medium block">{label}</label>
@@ -63,6 +73,14 @@ export function ImageUpload({ label, onUpload, isLoading }: ImageUploadProps) {
           <div className="space-y-2">
             <div className="relative w-full h-32">
               <Image src={preview || "/placeholder.svg"} alt="Preview" fill className="object-contain" />
+              <button
+                type="button"
+                onClick={removeImage}
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors shadow-md"
+                disabled={uploading || isLoading}
+              >
+                <X className="h-4 w-4" />
+              </button>
             </div>
             <Button
               type="button"
@@ -81,7 +99,8 @@ export function ImageUpload({ label, onUpload, isLoading }: ImageUploadProps) {
             className="w-full text-center py-6 hover:bg-muted/50 rounded transition"
             disabled={uploading || isLoading}
           >
-            <p className="text-muted-foreground text-sm">ক্লিক করে ছবি নির্বাচন করুন বা টেনে আনুন</p>
+            <p className="text-muted-foreground text-sm">আপনার ডকুমেন্টগুলি আপলোড করুন</p>
+            <p className="text-muted-foreground text-xs mt-1">ক্লিক করে ছবি নির্বাচন করুন বা টেনে আনুন</p>
           </button>
         )}
       </div>

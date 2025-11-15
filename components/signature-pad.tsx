@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef } from "react"
 import SignatureCanvas from "react-signature-canvas"
 import { Button } from "@/components/ui/button"
 
@@ -14,18 +14,15 @@ interface SignaturePadProps {
 export function SignaturePad({ onUpload, isLoading }: SignaturePadProps) {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState("")
+  const [submitted, setSubmitted] = useState(false)
   const signatureRef = useRef<SignatureCanvas>(null)
-  const lastSaveTimeout = useRef<NodeJS.Timeout | null>(null)
 
   const clearSignature = () => {
     signatureRef.current?.clear()
-    // Clear any existing timeout
-    if (lastSaveTimeout.current) {
-      clearTimeout(lastSaveTimeout.current)
-    }
+    setSubmitted(false)
   }
 
-  const autoSaveSignature = async () => {
+  const saveSignature = async () => {
     if (!signatureRef.current?.isEmpty()) {
       setError("")
       setUploading(true)
@@ -52,6 +49,7 @@ export function SignaturePad({ onUpload, isLoading }: SignaturePadProps) {
         
         const data = await response.json()
         onUpload(data.secure_url)
+        setSubmitted(true)
       } catch (err) {
         setError("আপলোড ব্যর্থ হয়েছে")
         console.error(err)
@@ -60,28 +58,6 @@ export function SignaturePad({ onUpload, isLoading }: SignaturePadProps) {
       }
     }
   }
-
-  // Auto-save when signature changes (with debounce)
-  useEffect(() => {
-    if (signatureRef.current && !signatureRef.current.isEmpty()) {
-      // Clear any existing timeout
-      if (lastSaveTimeout.current) {
-        clearTimeout(lastSaveTimeout.current)
-      }
-      
-      // Set new timeout to save after 1 second of inactivity
-      lastSaveTimeout.current = setTimeout(() => {
-        autoSaveSignature()
-      }, 1000)
-    }
-    
-    // Cleanup timeout on unmount
-    return () => {
-      if (lastSaveTimeout.current) {
-        clearTimeout(lastSaveTimeout.current)
-      }
-    }
-  }, [signatureRef.current?.toDataURL()])
 
   return (
     <div className="space-y-3">
@@ -96,8 +72,33 @@ export function SignaturePad({ onUpload, isLoading }: SignaturePadProps) {
             }}
             minWidth={1}
             maxWidth={3}
+            onEnd={() => setSubmitted(false)}
           />
           <div className="flex gap-2">
+            <Button
+              type="button"
+              onClick={saveSignature}
+              disabled={uploading || isLoading || signatureRef.current?.isEmpty() || submitted}
+              className={`${
+                submitted 
+                  ? "bg-green-700 hover:bg-green-800 text-white" 
+                  : "bg-green-600 hover:bg-green-700 text-white"
+              }`}
+            >
+              {uploading ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  সংরক্ষণ করছেন...
+                </span>
+              ) : submitted ? (
+                "স্বাক্ষর জমা হয়েছে।"
+              ) : (
+                "স্বাক্ষর জমা দিন"
+              )}
+            </Button>
             <Button
               type="button"
               variant="outline"
@@ -107,15 +108,6 @@ export function SignaturePad({ onUpload, isLoading }: SignaturePadProps) {
             >
               মুছুন
             </Button>
-            {uploading && (
-              <span className="text-sm text-gray-500 flex items-center">
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                সংরক্ষণ করছেন...
-              </span>
-            )}
           </div>
         </div>
       </div>

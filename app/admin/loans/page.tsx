@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
 import toast, { Toaster } from "react-hot-toast"
+import { convertToBanglaDigits } from "@/lib/utils"
 
 interface Loan {
   _id: string
@@ -127,9 +128,15 @@ export default function LoansPage() {
         const response = await fetch("/api/admin/loans")
         if (response.ok) {
           const data = await response.json()
-          setLoans(data)
-          setFilteredLoans(data)
-          setTotalLoans(data.length)
+          // Sort loans by application date (newest first)
+          const sortedLoans = [...data].sort((a: Loan, b: Loan) => {
+            const dateA = a.applicationDate ? new Date(a.applicationDate).getTime() : 0
+            const dateB = b.applicationDate ? new Date(b.applicationDate).getTime() : 0
+            return dateB - dateA
+          })
+          setLoans(sortedLoans)
+          setFilteredLoans(sortedLoans)
+          setTotalLoans(sortedLoans.length)
           setError(null)
         } else {
           const errorData = await response.json()

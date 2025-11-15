@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { convertToBanglaDigits } from "@/lib/utils"
 
 interface LoanData {
   _id?: string
@@ -98,7 +99,7 @@ export function MyLoans() {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center py-2 border-b border-blue-50">
                     <span className="text-blue-600">ঋণের পরিমাণ:</span>
-                    <span className="font-bold text-blue-900">৳{loanData.amount?.toLocaleString("en-US") || "0"}</span>
+                    <span className="font-bold text-blue-900">৳{convertToBanglaDigits(loanData.amount?.toLocaleString("en-US") || "0")}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-blue-50">
                     <span className="text-blue-600">সুদের হার:</span>
@@ -106,7 +107,7 @@ export function MyLoans() {
                   </div>
                   <div className="flex justify-between items-center py-2">
                     <span className="text-blue-600">প্রতি মাসে পরিশোধ:</span>
-                    <span className="font-bold text-blue-900">৳{loanData.monthlyInstallment?.toLocaleString("en-US") || "0"}</span>
+                    <span className="font-bold text-blue-900">৳{convertToBanglaDigits(loanData.monthlyInstallment?.toLocaleString("en-US") || "0")}</span>
                   </div>
                 </div>
               </Card>
@@ -147,7 +148,7 @@ export function MyLoans() {
                 <h3 className="font-bold text-amber-700 mb-3 pb-2 border-b border-amber-100">পেমেন্ট ও মেয়াদ</h3>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center py-2 border-b border-amber-50">
-                    <span className="text-amber-600">পেমেন্ট তারিখ:</span>
+                    <span className="text-amber-600">পরবর্তী কিস্তির তারিখ:</span>
                     <span className="font-bold text-amber-900">{formatDate(loanData.paymentDate)}</span>
                   </div>
                   <div className="flex justify-between items-center py-2">

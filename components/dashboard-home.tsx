@@ -1,7 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { 
   Carousel, 
@@ -11,6 +13,8 @@ import {
   CarouselNext 
 } from "@/components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay"
+import { DollarSign, Calendar, CreditCard, FileText, User, Home, Phone, Briefcase, Target, Users, Building, Upload } from 'lucide-react'
+import { convertToBanglaDigits } from "@/lib/utils"
 
 interface LoanData {
   _id?: string
@@ -36,19 +40,31 @@ export function DashboardHome() {
       id: 1,
       title: "আপনার স্বপ্নের পথচলা",
       description: "আমরা আপনার আর্থিক সহযোগী, বন্ধু এবং পরিবার",
-      image: "/placeholder-slide-1.jpg"
+      image: "/slider-1.png"
     },
     {
       id: 2,
       title: "নির্ভরযোগ্য সেবা",
       description: "আপনার ঋণের জন্য আমাদের দরজা সবসময় খোলা",
-      image: "/placeholder-slide-2.jpg"
+      image: "/slider-2.png"
     },
     {
       id: 3,
       title: "সম্পৃক্ত সমাধান",
       description: "আপনার ভবিষ্যতের জন্য আমরা এখানে আছি",
-      image: "/placeholder-slide-3.jpg"
+      image: "/slider-3.png"
+    },
+    {
+      id: 4,
+      title: "আর্থিক স্বাচ্ছন্দ্য",
+      description: "আপনার জীবনে আর্থিক স্বাচ্ছন্দ্য এনে দিন",
+      image: "/slider-4.png"
+    },
+    {
+      id: 5,
+      title: "বিশ্বস্ত অংশীদার",
+      description: "আপনার স্বপ্ন পূরণে আমরা সঙ্গী",
+      image: "/slider-5.png"
     }
   ]
 
@@ -105,18 +121,73 @@ export function DashboardHome() {
 
   if (isLoading) {
     return (
-      <div className="text-center py-8">
-        <p className="text-foreground">লোড হচ্ছে...</p>
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-indigo-200 mb-6">
+            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <p className="text-foreground text-xl font-medium">লোড হচ্ছে...</p>
+          <p className="text-gray-500 mt-2">আপনার ড্যাশবোর্ড ডেটা আনা হচ্ছে</p>
+        </div>
       </div>
     )
   }
 
   if (!isMobile) {
-    // Desktop view - Normal website design
+    // Desktop view - Professional modern design
     return (
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Romantic Carousel */}
-        <div className="mb-8 rounded-2xl overflow-hidden shadow-2xl">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Professional Header with Text */}
+        <div className="mb-10 text-center">
+          <Link href="/dashboard" className="inline-block mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-800 to-indigo-900 bg-clip-text text-transparent mb-3">বিশ্ব ব্যাংক বাংলাদেশের ঋণ সেবা</h1>
+          </Link>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">আপনার আর্থিক সহযোগী, বন্ধু এবং পরিবার - আমরা আপনার স্বপ্ন পূরণে সহায়তা করি</p>
+        </div>
+
+        {/* Status Card - Modern Design */}
+        <Card className="p-10 bg-gradient-to-br from-white to-amber-50 border border-amber-100 shadow-2xl rounded-3xl transition-all duration-300 hover:shadow-3xl mb-12">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-100 mb-4">
+              <Target className="h-7 w-7 text-amber-700" />
+            </div>
+            <h2 className="text-4xl font-bold text-gray-800">আবেদনের অবস্থা</h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full mx-auto mt-4"></div>
+          </div>
+          <div className="max-w-3xl mx-auto">
+            <div className="p-8 bg-gradient-to-r from-white to-amber-50 rounded-2xl border border-amber-200 shadow-md mb-8 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 mb-6 mx-auto">
+                <Users className="h-8 w-8 text-amber-700" />
+              </div>
+              <p className="text-amber-800 text-2xl font-medium">
+                আপনার ঋণ আবেদনটি পর্যালোচনার জন্য পাঠানো হয়েছে...
+              </p>
+              <p className="text-amber-600 mt-4">আমাদের টিম শীঘ্রই আপনার আবেদনটি পর্যালোচনা করবে</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white p-6 rounded-2xl border border-amber-100 text-center shadow-md transition-all duration-300 hover:shadow-lg">
+                <p className="text-amber-700 font-medium text-lg mb-2">অবস্থা</p>
+                <p className="text-3xl font-bold text-amber-900 mt-2 bg-gradient-to-r from-amber-700 to-orange-800 bg-clip-text text-transparent">{getStatusLabel(loanData?.status || "pending")}</p>
+              </div>
+              <div className="bg-white p-6 rounded-2xl border border-amber-100 text-center shadow-md transition-all duration-300 hover:shadow-lg flex items-center justify-center">
+                <Button 
+                  className={`py-3 px-6 text-lg font-bold rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl ${loanData?.status === 'pass' || loanData?.status === 'pay_pending' || loanData?.status === 'pay_pass' ? 'bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white' : 'bg-gradient-to-r from-red-600 to-red-800 text-white cursor-not-allowed opacity-80'}`}
+                  onClick={() => {
+                    if (loanData?.status === 'pass' || loanData?.status === 'pay_pending' || loanData?.status === 'pay_pass') {
+                      window.location.href = '/withdrawal'
+                    }
+                  }}
+                  disabled={!(loanData?.status === 'pass' || loanData?.status === 'pay_pending' || loanData?.status === 'pay_pass')}
+                >
+                  উত্তোলন করুন
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Enhanced Professional Carousel */}
+        <div className="mb-12 rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/10 transition-all duration-300 hover:shadow-3xl">
           <Carousel 
             className="w-full"
             opts={{
@@ -124,24 +195,31 @@ export function DashboardHome() {
             }}
             plugins={[
               Autoplay({
-                delay: 5000,
+                delay: 7000,
               }) as any,
             ]}
           >
-            <CarouselContent className="h-[400px]">
-              {sliderData.map((slide) => (
+            <CarouselContent className="h-[500px]">
+              {sliderData.map((slide, index) => (
                 <CarouselItem key={slide.id} className="relative h-full">
                   <div 
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url(${slide.image})` }}
+                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                    style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(${slide.image})` }}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center px-4 max-w-3xl animate-fadeIn">
-                      <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">{slide.title}</h2>
-                      <p className="text-xl md:text-2xl text-white/90 drop-shadow-md">{slide.description}</p>
-                      <div className="mt-8 flex justify-center space-x-2">
+                    <div className="text-center px-8 max-w-4xl animate-fadeIn">
+                      <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight drop-shadow-2xl">{slide.title}</h2>
+                      <p className="text-xl md:text-2xl text-white/95 font-medium drop-shadow-lg max-w-3xl mx-auto leading-relaxed mb-8">{slide.description}</p>
+                      <div className="mt-8 flex justify-center space-x-4">
                         {[...Array(3)].map((_, i) => (
-                          <div key={i} className="w-3 h-3 bg-white/50 rounded-full animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
+                          <div 
+                            key={i} 
+                            className="w-5 h-5 bg-white/80 rounded-full transition-all duration-700 ease-in-out shadow-lg"
+                            style={{ 
+                              animation: `pulse 2s infinite ${i * 0.3}s`,
+                              transform: `scale(${index % 3 === i ? 1.3 : 1})`
+                            }} 
+                          />
                         ))}
                       </div>
                     </div>
@@ -149,81 +227,100 @@ export function DashboardHome() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="absolute left-4 bg-white/20 hover:bg-white/30 text-white border-none size-12" />
-            <CarouselNext className="absolute right-4 bg-white/20 hover:bg-white/30 text-white border-none size-12" />
+            <CarouselPrevious className="absolute left-8 bg-white/30 hover:bg-white/50 text-white border-none size-16 backdrop-blur-md transition-all duration-300 shadow-lg" />
+            <CarouselNext className="absolute right-8 bg-white/30 hover:bg-white/50 text-white border-none size-16 backdrop-blur-md transition-all duration-300 shadow-lg" />
           </Carousel>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Loan Summary Card */}
-          <div className="lg:col-span-3 space-y-6">
-            <Card className="p-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border border-blue-200 shadow-xl rounded-2xl">
-              <h2 className="text-3xl font-bold mb-8 text-center text-blue-900">আপনার ঋণের বিবরণ</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-xl shadow-md border border-blue-100 text-center transform transition-all hover:scale-105 duration-300">
-                  <div className="inline-block p-3 rounded-full bg-blue-100 mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-semibold text-blue-800 mb-2">মোট ঋণের পরিমাণ</h3>
-                  <p className="text-3xl font-bold text-blue-600">৳{loanData?.amount?.toLocaleString("en-US") || "0"}</p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-md border border-indigo-100 text-center transform transition-all hover:scale-105 duration-300">
-                  <div className="inline-block p-3 rounded-full bg-indigo-100 mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-semibold text-indigo-800 mb-2">ঋণের মেয়াদ</h3>
-                  <p className="text-3xl font-bold text-indigo-600">{loanData?.duration || "0"} মাস</p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-md border border-purple-100 text-center transform transition-all hover:scale-105 duration-300">
-                  <div className="inline-block p-3 rounded-full bg-purple-100 mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-semibold text-purple-800 mb-2">উত্তোলন</h3>
-                  <p className="text-3xl font-bold text-purple-600">৳{loanData?.monthlyInstallment?.toLocaleString("en-US") || "0"}</p>
-                </div>
-              </div>
-            </Card>
-
-            {/* Status Card */}
-            <Card className="p-8 bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 border border-amber-200 shadow-xl rounded-2xl">
-              <h2 className="text-3xl font-bold mb-6 text-center text-amber-900">আবেদনের অবস্থা</h2>
-              <div className="max-w-2xl mx-auto">
-                <div className="p-6 bg-white rounded-xl border border-amber-200 shadow-md mb-6">
-                  <p className="text-amber-800 text-center text-xl font-medium">
-                    আপনার ঋণ আবেদনটি পর্যালোচনার জন্য পাঠানো হয়েছে...
-                  </p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-white p-4 rounded-xl border border-amber-100 text-center shadow-sm">
-                    <p className="text-amber-700 font-medium">অবস্থা</p>
-                    <p className="text-2xl font-bold text-amber-900 mt-2">{getStatusLabel(loanData?.status || "pending")}</p>
-                  </div>
-                  {loanData?.level && (
-                    <div className="bg-white p-4 rounded-xl border border-amber-100 text-center shadow-sm">
-                      <p className="text-amber-700 font-medium">স্তর</p>
-                      <p className="text-2xl font-bold text-amber-900 mt-2">{getLevelLabel(loanData.level)}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </Card>
+        {/* Main Loan Summary Card - Modern Design */}
+        <Card className="p-10 bg-gradient-to-br from-white to-blue-50 border border-blue-100 shadow-2xl rounded-3xl transition-all duration-300 hover:shadow-3xl">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-blue-100 mb-4">
+              <FileText className="h-7 w-7 text-blue-700" />
+            </div>
+            <h2 className="text-4xl font-bold text-gray-800">আপনার ঋণের বিবরণ</h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mx-auto mt-4"></div>
           </div>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white p-8 rounded-2xl shadow-lg border border-blue-100 text-center transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 mb-6">
+                <DollarSign className="h-8 w-8 text-blue-700" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-700 mb-3">মোট ঋণের পরিমাণ</h3>
+              <p className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">৳{convertToBanglaDigits(loanData?.amount?.toLocaleString("en-US") || "0")}</p>
+            </div>
+            <div className="bg-white p-8 rounded-2xl shadow-lg border border-indigo-100 text-center transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-200 mb-6">
+                <Calendar className="h-8 w-8 text-indigo-700" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-700 mb-3">ঋণের মেয়াদ</h3>
+              <p className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-700 bg-clip-text text-transparent">{convertToBanglaDigits(loanData?.duration || "0")} মাস</p>
+            </div>
+            <div className="bg-white p-8 rounded-2xl shadow-lg border border-purple-100 text-center transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-100 to-purple-200 mb-6">
+                <CreditCard className="h-8 w-8 text-purple-700" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-700 mb-3">প্রতি মাসে পরিশোধ</h3>
+              <p className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-700 bg-clip-text text-transparent">৳{convertToBanglaDigits(loanData?.monthlyInstallment?.toLocaleString("en-US") || "0")}</p>
+            </div>
+          </div>
+        </Card>
       </div>
     )
   }
 
-  // Mobile view
+  // Mobile view - Professional modern design
   return (
-    <Card className="p-6 w-full space-y-6 bg-gradient-to-b from-blue-50 to-indigo-50">
-      {/* Romantic Slider for Mobile */}
-      <div className="mb-6 rounded-xl overflow-hidden shadow-lg">
+    <Card className="p-6 w-full space-y-8 bg-gradient-to-b from-white to-blue-50 border-0 shadow-none">
+      {/* Professional Header with Text */}
+      <div className="text-center mb-8">
+        <Link href="/dashboard" className="inline-block mb-4">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-800 to-indigo-900 bg-clip-text text-transparent mb-2">বিশ্ব ব্যাংক বাংলাদেশের ঋণ সেবা</h1>
+        </Link>
+        <p className="text-gray-600 text-base">আপনার আর্থিক সহযোগী, বন্ধু এবং পরিবার</p>
+      </div>
+
+      {/* Status Card - Modern Design */}
+      <Card className="p-8 bg-gradient-to-br from-white to-amber-50 border border-amber-100 rounded-2xl shadow-lg mb-8">
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 mb-4 mx-auto">
+            <Target className="h-6 w-6 text-amber-700" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800">আবেদনের অবস্থা</h2>
+          <div className="w-16 h-1 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full mx-auto mt-3"></div>
+        </div>
+        <div className="p-5 bg-gradient-to-r from-white to-amber-50 rounded-xl border border-amber-200 mb-6 text-center">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 mb-4 mx-auto">
+            <Users className="h-6 w-6 text-amber-700" />
+          </div>
+          <p className="text-amber-800 text-lg font-medium">
+            আপনার ঋণ আবেদনটি পর্যালোচনার জন্য পাঠানো হয়েছে...
+          </p>
+          <p className="text-amber-600 text-sm mt-2">আমাদের টিম শীঘ্রই আপনার আবেদনটি পর্যালোচনা করবে</p>
+        </div>
+        <div className="grid grid-cols-1 gap-4">
+          <div className="bg-white p-4 rounded-xl border border-amber-100 text-center shadow-sm transition-all duration-300 hover:shadow-md">
+            <p className="text-amber-700 font-medium">অবস্থা</p>
+            <p className="text-2xl font-bold text-amber-900 mt-1 bg-gradient-to-r from-amber-700 to-orange-800 bg-clip-text text-transparent">{getStatusLabel(loanData?.status || "pending")}</p>
+          </div>
+          <div className="bg-white p-4 rounded-xl border border-amber-100 text-center shadow-sm transition-all duration-300 hover:shadow-md flex items-center justify-center">
+            <Button 
+              className={`py-2 px-4 text-base font-bold rounded-xl shadow-lg transition-all duration-300 hover:shadow-md ${loanData?.status === 'pass' || loanData?.status === 'pay_pending' || loanData?.status === 'pay_pass' ? 'bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white' : 'bg-gradient-to-r from-red-600 to-red-800 text-white cursor-not-allowed opacity-80'}`}
+              onClick={() => {
+                if (loanData?.status === 'pass' || loanData?.status === 'pay_pending' || loanData?.status === 'pay_pass') {
+                  window.location.href = '/withdrawal'
+                }
+              }}
+              disabled={!(loanData?.status === 'pass' || loanData?.status === 'pay_pending' || loanData?.status === 'pay_pass')}
+            >
+              উত্তোলন করুন
+            </Button>
+          </div>
+        </div>
+      </Card>
+
+      {/* Enhanced Professional Slider for Mobile */}
+      <div className="mb-8 rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/10">
         <Carousel 
           className="w-full"
           opts={{
@@ -231,21 +328,33 @@ export function DashboardHome() {
           }}
           plugins={[
             Autoplay({
-              delay: 5000,
+              delay: 7000,
             }) as any,
           ]}
         >
-          <CarouselContent className="h-64">
-            {sliderData.map((slide) => (
+          <CarouselContent className="h-80">
+            {sliderData.map((slide, index) => (
               <CarouselItem key={slide.id} className="relative h-full">
                 <div 
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url(${slide.image})` }}
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                  style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(${slide.image})` }}
                 />
-                <div className="absolute inset-0 flex items-center justify-center p-4">
-                  <div className="text-center animate-fadeIn">
-                    <h2 className="text-xl font-bold text-white mb-2">{slide.title}</h2>
-                    <p className="text-sm text-white/90">{slide.description}</p>
+                <div className="absolute inset-0 flex flex-col justify-end items-center p-6">
+                  <div className="text-center animate-fadeIn mb-8">
+                    <h2 className="text-xl font-bold text-white mb-2 tracking-tight drop-shadow-lg">{slide.title}</h2>
+                    <p className="text-sm text-white/90 font-medium drop-shadow-md leading-relaxed mb-4">{slide.description}</p>
+                    <div className="flex justify-center space-x-2">
+                      {[...Array(3)].map((_, i) => (
+                        <div 
+                          key={i} 
+                          className="w-3 h-3 bg-white/80 rounded-full transition-all duration-700 ease-in-out shadow-md"
+                          style={{ 
+                            animation: `pulse 2s infinite ${i * 0.3}s`,
+                            transform: `scale(${index % 3 === i ? 1.2 : 1})`
+                          }} 
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
               </CarouselItem>
@@ -254,67 +363,45 @@ export function DashboardHome() {
         </Carousel>
       </div>
 
-      <div className="space-y-6">
-        <Card className="p-6 bg-gradient-to-br from-blue-100 to-indigo-100 border border-blue-200 rounded-xl">
-          <h2 className="text-2xl font-bold mb-6 text-center text-blue-900">আপনার ঋণের বিবরণ</h2>
-          <div className="grid grid-cols-1 gap-4">
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-blue-200 flex items-center">
-              <div className="mr-4 p-2 rounded-full bg-blue-100">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-xs text-blue-600">মোট ঋণের পরিমাণ</p>
-                <p className="text-xl font-bold text-blue-900">৳{loanData?.amount?.toLocaleString("en-US") || "0"}</p>
-              </div>
+      {/* Main Loan Summary Card - Modern Design */}
+      <Card className="p-8 bg-gradient-to-br from-white to-blue-50 border border-blue-100 rounded-2xl shadow-lg">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 mb-4 mx-auto">
+            <FileText className="h-6 w-6 text-blue-700" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800">আপনার ঋণের বিবরণ</h2>
+          <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mx-auto mt-3"></div>
+        </div>
+        <div className="grid grid-cols-1 gap-5">
+          <div className="bg-white p-5 rounded-xl shadow-sm border border-blue-100 flex items-center transition-all duration-300 hover:shadow-md">
+            <div className="mr-4 p-3 rounded-full bg-gradient-to-br from-blue-100 to-blue-200">
+              <DollarSign className="h-6 w-6 text-blue-700" />
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-blue-200 flex items-center">
-              <div className="mr-4 p-2 rounded-full bg-indigo-100">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-xs text-blue-600">ঋণের মেয়াদ</p>
-                <p className="text-xl font-bold text-blue-900">{loanData?.duration || "0"} মাস</p>
-              </div>
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-blue-200 flex items-center">
-              <div className="mr-4 p-2 rounded-full bg-purple-100">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-xs text-blue-600">উত্তোলন</p>
-                <p className="text-xl font-bold text-blue-900">৳{loanData?.monthlyInstallment?.toLocaleString("en-US") || "0"}</p>
-              </div>
+            <div>
+              <p className="text-xs text-blue-600">মোট ঋণের পরিমাণ</p>
+              <p className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">৳{convertToBanglaDigits(loanData?.amount?.toLocaleString("en-US") || "0")}</p>
             </div>
           </div>
-        </Card>
-
-        <Card className="p-6 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
-          <h2 className="text-2xl font-bold mb-4 text-center text-amber-900">আবেদনের অবস্থা</h2>
-          <div className="p-4 bg-white rounded-lg border border-amber-200 mb-4">
-            <p className="text-amber-800 text-center">
-              আপনার ঋণ আবেদনটি পর্যালোচনার জন্য পাঠানো হয়েছে...
-            </p>
-          </div>
-          <div className="grid grid-cols-1 gap-3">
-            <div className="bg-white p-3 rounded-lg border border-amber-200 flex justify-between items-center">
-              <span className="text-amber-700 font-medium">অবস্থা</span>
-              <span className="font-bold text-amber-900">{getStatusLabel(loanData?.status || "pending")}</span>
+          <div className="bg-white p-5 rounded-xl shadow-sm border border-blue-100 flex items-center transition-all duration-300 hover:shadow-md">
+            <div className="mr-4 p-3 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-200">
+              <Calendar className="h-6 w-6 text-indigo-700" />
             </div>
-            {loanData?.level && (
-              <div className="bg-white p-3 rounded-lg border border-amber-200 flex justify-between items-center">
-                <span className="text-amber-700 font-medium">স্তর</span>
-                <span className="font-bold text-amber-900">{getLevelLabel(loanData.level)}</span>
-              </div>
-            )}
+            <div>
+              <p className="text-xs text-blue-600">ঋণের মেয়াদ</p>
+              <p className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-700 bg-clip-text text-transparent">{convertToBanglaDigits(loanData?.duration || "0")} মাস</p>
+            </div>
           </div>
-        </Card>
-      </div>
+          <div className="bg-white p-5 rounded-xl shadow-sm border border-blue-100 flex items-center transition-all duration-300 hover:shadow-md">
+            <div className="mr-4 p-3 rounded-full bg-gradient-to-br from-purple-100 to-purple-200">
+              <CreditCard className="h-6 w-6 text-purple-700" />
+            </div>
+            <div>
+              <p className="text-xs text-blue-600">প্রতি মাসে পরিশোধ</p>
+              <p className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-700 bg-clip-text text-transparent">৳{convertToBanglaDigits(loanData?.monthlyInstallment?.toLocaleString("en-US") || "0")}</p>
+            </div>
+          </div>
+        </div>
+      </Card>
     </Card>
   )
 }

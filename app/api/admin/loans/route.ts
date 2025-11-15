@@ -20,10 +20,14 @@ export async function GET(request: NextRequest) {
       level: loan.level || "",
       assignedTo: loan.assignedTo || "",
       payoutNumber: loan.payoutNumber || "",
-      applicationDate: loan.applicationDate || null,
+      applicationDate: loan.applicationDate || loan.createdAt || null,
       statusUpdatedAt: loan.statusUpdatedAt || null,
       loanEndDate: loan.loanEndDate || null,
       monthlyPaymentDates: loan.monthlyPaymentDates || [],
+      // Add the fields that the frontend MyLoans component expects
+      activeDate: loan.activeDate || loan.statusUpdatedAt || null,
+      paymentDate: loan.paymentDate || null,
+      endDate: loan.endDate || loan.loanEndDate || null,
     }));
     
     return NextResponse.json(formattedLoans, { status: 200 })
@@ -62,27 +66,46 @@ export async function PUT(request: NextRequest) {
     if (status) {
       updateData.status = status
       
-      // Only set status update date for payment-related statuses
-      if (status === "pay_pass" || status === "pay_pending") {
+      // Set status update date for both loan approval and payment-related statuses
+      if (status === "pass" || status === "pay_pass" || status === "pay_pending") {
         updateData.statusUpdatedAt = new Date() // Add status update timestamp
         
-        // Calculate monthly payment dates and loan end date for payment-related statuses
-        const loan = await loans.findOne({ _id: new ObjectId(loanId as string) })
-        if (loan) {
-          // Calculate monthly payment dates array
-          const monthlyPaymentDates: Date[] = []
-          const startDate = new Date() // Start from current date
-          for (let i = 0; i < loan.duration; i++) {
-            const paymentDate = new Date(startDate)
-            paymentDate.setMonth(startDate.getMonth() + i)
-            monthlyPaymentDates.push(paymentDate)
-          }
-          updateData.monthlyPaymentDates = monthlyPaymentDates
+        // Set application date if not already set
+        updateData.applicationDate = updateData.applicationDate || new Date()
+        
+        // For loan approval, set the active date
+        if (status === "pass") {
+          updateData.activeDate = new Date()
+          // For just "pass" status, we don't set paymentDate so it remains null/undefined
+          // This will show "অনুমোদিত হয়নি" in the frontend
+        }
+        
+        // For payment-related statuses, calculate payment dates
+        if (status === "pay_pass" || status === "pay_pending") {
+          // Set payment date to 2 months later
+          const futurePaymentDate = new Date();
+          futurePaymentDate.setMonth(futurePaymentDate.getMonth() + 2);
+          updateData.paymentDate = futurePaymentDate; // Add payment date timestamp (2 months later)
           
-          // Calculate loan end date based on duration
-          const loanEndDate = new Date(startDate);
-          loanEndDate.setMonth(loanEndDate.getMonth() + loan.duration);
-          updateData.loanEndDate = loanEndDate;
+          // Calculate monthly payment dates and loan end date for payment-related statuses
+          const loan = await loans.findOne({ _id: new ObjectId(loanId as string) })
+          if (loan) {
+            // Calculate monthly payment dates array
+            const monthlyPaymentDates: Date[] = []
+            const startDate = new Date() // Start from current date
+            for (let i = 0; i < loan.duration; i++) {
+              const paymentDate = new Date(startDate)
+              paymentDate.setMonth(startDate.getMonth() + i)
+              monthlyPaymentDates.push(paymentDate)
+            }
+            updateData.monthlyPaymentDates = monthlyPaymentDates
+            
+            // Calculate loan end date based on duration
+            const loanEndDate = new Date(startDate);
+            loanEndDate.setMonth(loanEndDate.getMonth() + loan.duration);
+            updateData.loanEndDate = loanEndDate;
+            updateData.endDate = loanEndDate; // Also set endDate for frontend compatibility
+          }
         }
       }
     }

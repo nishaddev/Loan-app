@@ -93,6 +93,10 @@ export async function GET(request: NextRequest) {
       statusUpdatedAt: user.statusUpdatedAt || null,
       loanEndDate: user.loanEndDate || null,
       monthlyPaymentDates: user.monthlyPaymentDates || [],
+      // Add the fields that the frontend MyLoans component expects
+      activeDate: user.activeDate || user.statusUpdatedAt || null,
+      paymentDate: user.paymentDate || null,
+      endDate: user.endDate || user.loanEndDate || null,
     }
 
     return NextResponse.json(loanData, { status: 200 })
