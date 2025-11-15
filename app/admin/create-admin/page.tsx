@@ -15,12 +15,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import toast from "react-hot-toast"
 
 interface Admin {
   _id: string
   name: string
   email: string
+  role: string
   createdAt: string
 }
 
@@ -32,6 +40,8 @@ export default function CreateAdminPage() {
   const [loadingAdmins, setLoadingAdmins] = useState(true)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [name, setName] = useState("")
+  const [role, setRole] = useState("admin")
 
   // Fetch all admins
   useEffect(() => {
@@ -60,10 +70,11 @@ export default function CreateAdminPage() {
     setIsLoading(true)
 
     try {
+      const adminId = localStorage.getItem("adminId")
       const response = await fetch("/api/admin/create-admin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password, adminId, role }),
       })
 
       const data = await response.json()
@@ -72,6 +83,15 @@ export default function CreateAdminPage() {
         toast.success("Admin created successfully!")
         setEmail("")
         setPassword("")
+        setName("")
+        setRole("admin")
+        
+        // Refresh the admin list
+        const refreshResponse = await fetch("/api/admin/users")
+        if (refreshResponse.ok) {
+          const refreshedData = await refreshResponse.json()
+          setAdmins(refreshedData)
+        }
       } else {
         setError(data.error || "Failed to create admin")
       }
@@ -94,6 +114,19 @@ export default function CreateAdminPage() {
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Create New Admin</h2>
             <form onSubmit={handleCreateAdmin} className="space-y-4">
+              <div>
+                <label className="text-sm font-medium block mb-2">Name</label>
+                <Input
+                  name="name"
+                  type="text"
+                  placeholder="Admin Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+              
               <div>
                 <label className="text-sm font-medium block mb-2">Email</label>
                 <Input
@@ -118,6 +151,22 @@ export default function CreateAdminPage() {
                   required
                   disabled={isLoading}
                 />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium block mb-2">Role</label>
+                <Select value={role} onValueChange={setRole} disabled={isLoading}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="administrator">Administrator</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Administrator has full access. Admin has standard access.
+                </p>
               </div>
 
               {error && <div className="p-3 bg-destructive/10 text-destructive rounded-md text-sm">{error}</div>}
@@ -144,13 +193,14 @@ export default function CreateAdminPage() {
                     <TableRow>
                       <TableHead>Name</TableHead>
                       <TableHead>Email</TableHead>
+                      <TableHead>Role</TableHead>
                       <TableHead>Created At</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {admins.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={3} className="text-center py-4">
+                        <TableCell colSpan={4} className="text-center py-4">
                           No admins found
                         </TableCell>
                       </TableRow>
@@ -159,6 +209,15 @@ export default function CreateAdminPage() {
                         <TableRow key={admin._id}>
                           <TableCell className="font-medium">{admin.name}</TableCell>
                           <TableCell>{admin.email}</TableCell>
+                          <TableCell>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              admin.role === "administrator" 
+                                ? "bg-purple-100 text-purple-800" 
+                                : "bg-blue-100 text-blue-800"
+                            }`}>
+                              {admin.role}
+                            </span>
+                          </TableCell>
                           <TableCell>
                             {new Date(admin.createdAt).toLocaleDateString()}
                           </TableCell>

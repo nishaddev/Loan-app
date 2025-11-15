@@ -38,6 +38,7 @@ export default function AdminLoginPage() {
 
       if (response.ok) {
         localStorage.setItem("adminId", data.adminId)
+        localStorage.setItem("adminRole", data.role)
         router.push("/admin")
       } else {
         setError(data.error || "Login failed")
@@ -82,6 +83,13 @@ export default function AdminLoginPage() {
           </div>
 
           {error && <div className="p-3 bg-destructive/10 text-destructive rounded-md text-sm">{error}</div>}
+          <div className="text-sm text-muted-foreground">
+            <p>Available roles:</p>
+            <ul className="list-disc pl-5 mt-1">
+              <li>administrator - Full access</li>
+              <li>admin - Standard access</li>
+            </ul>
+          </div>
 
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Logging in..." : "Login"}

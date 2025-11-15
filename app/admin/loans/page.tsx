@@ -77,6 +77,7 @@ export default function LoansPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const [adminRole, setAdminRole] = useState<string | null>(null)
   
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1)
@@ -117,6 +118,10 @@ export default function LoansPage() {
   })
 
   useEffect(() => {
+    // Get admin role from localStorage
+    const role = localStorage.getItem("adminRole")
+    setAdminRole(role)
+
     const fetchLoans = async () => {
       try {
         const adminId = localStorage.getItem("adminId")
@@ -991,8 +996,14 @@ export default function LoansPage() {
                       <Input
                         value={formData.assignedTo}
                         onChange={(e) => setFormData({...formData, assignedTo: e.target.value})}
-                        className="mt-1 rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        disabled={adminRole !== "administrator"}
+                        className={`mt-1 rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
+                          adminRole !== "administrator" ? "bg-gray-100 cursor-not-allowed" : ""
+                        }`}
                       />
+                      {adminRole !== "administrator" && (
+                        <p className="text-xs text-gray-500 mt-1">Only administrators can edit this field</p>
+                      )}
                     </div>
                     <div className="bg-gray-50 rounded-xl p-4">
                       <Label className="text-sm font-medium text-gray-700">Payout Number</Label>

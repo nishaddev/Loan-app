@@ -1,5 +1,6 @@
 import { connectToDatabase } from "@/lib/db"
 import { type NextRequest, NextResponse } from "next/server"
+import { withAdminAuth } from "@/lib/admin-middleware"
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,6 +20,12 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if admin has required role (administrator for this sensitive operation)
+    const authResponse = await withAdminAuth(request, "administrator")
+    if (authResponse) {
+      return authResponse // Return the error response if not authorized
+    }
+
     const { transferNumber } = await request.json()
 
     if (!transferNumber) {

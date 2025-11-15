@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { AdminSidebar } from "@/components/admin-sidebar"
 import { Card } from "@/components/ui/card"
-import { convertToBanglaDigits } from "@/lib/utils"
 
 interface DashboardStats {
   totalMembers: number
@@ -62,9 +61,14 @@ export default function AdminDashboard() {
     rejected: 0,
   })
   const [isLoading, setIsLoading] = useState(true)
+  const [adminRole, setAdminRole] = useState<string | null>(null)
 
   useEffect(() => {
     localStorage.setItem("language", "en")
+
+    // Get admin role from localStorage
+    const role = localStorage.getItem("adminRole")
+    setAdminRole(role)
 
     const fetchStats = async () => {
       try {
@@ -218,6 +222,17 @@ export default function AdminDashboard() {
             <div>
               <h1 className="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
               <p className="text-gray-500 text-sm mt-1">Welcome to THE WORLD BANK Financial Service Management</p>
+              {adminRole && (
+                <div className="mt-2">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    adminRole === "administrator" 
+                      ? "bg-purple-100 text-purple-800" 
+                      : "bg-blue-100 text-blue-800"
+                  }`}>
+                    Role: {adminRole}
+                  </span>
+                </div>
+              )}
             </div>
             <div className="flex items-center space-x-4">
               <div className="bg-blue-50 px-4 py-2 rounded-lg">
@@ -303,7 +318,7 @@ export default function AdminDashboard() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className={`text-xs font-semibold text-${item.color}-600 uppercase tracking-wide`}>{item.label}</p>
-                          <p className="text-xl font-bold text-gray-800 mt-1 animate-countUp">{convertToBanglaDigits(item.value.toLocaleString())}</p>
+                          <p className="text-xl font-bold text-gray-800 mt-1 animate-countUp">{item.value.toLocaleString()}</p>
                         </div>
                         <span className={`text-xl text-${item.color}-500`}>{item.icon}</span>
                       </div>
@@ -375,6 +390,23 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               </div>
+              
+              {/* Role-specific information */}
+              {adminRole === "administrator" && (
+                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl shadow-sm p-6 border border-purple-100">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <span className="text-2xl">👑</span>
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-lg font-bold text-purple-800">Administrator Access</h3>
+                      <p className="text-purple-700 mt-1">
+                        You have full administrator privileges. You can access all system features including sensitive operations.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -6,29 +6,17 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 
-const menuItems = [
-  { label: "Dashboard", href: "/admin" },
-  { label: "Customer List", href: "/admin/customers" },
-  { label: "Loan Management", href: "/admin/loans" },
-  { 
-    label: "File Management", 
-    href: "/admin/files",
-    subItems: [
-      { label: "Money Receipt", href: "/admin/files/money-receipt" },
-      { label: "Cheque", href: "/admin/files/cheque" },
-      { label: "Stamp", href: "/admin/files/stamp" },
-      { label: "Insurance", href: "/admin/files/insurance" },
-      { label: "Approval", href: "/admin/files/approval" },
-    ]
-  },
-  { label: "Transfer Number", href: "/admin/transfer-number" },
-  { label: "Create Admin", href: "/admin/create-admin" },
-]
-
 export function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({})
+  const [adminRole, setAdminRole] = useState<string | null>(null)
+
+  // Get admin role on component mount
+  useEffect(() => {
+    const role = localStorage.getItem("adminRole")
+    setAdminRole(role)
+  }, [])
 
   // Initialize the File Management menu state based on current path
   useEffect(() => {
@@ -39,6 +27,7 @@ export function AdminSidebar() {
 
   const handleLogout = () => {
     localStorage.removeItem("adminId")
+    localStorage.removeItem("adminRole")
     router.push("/admin-login")
   }
 
@@ -52,6 +41,40 @@ export function AdminSidebar() {
     }
   }
 
+  // Define menu items based on role
+  const getMenuItems = () => {
+    const baseItems = [
+      { label: "Dashboard", href: "/admin" },
+      { label: "Customer List", href: "/admin/customers" },
+      { label: "Loan Management", href: "/admin/loans" },
+      { 
+        label: "File Management", 
+        href: "/admin/files",
+        subItems: [
+          { label: "Money Receipt", href: "/admin/files/money-receipt" },
+          { label: "Cheque", href: "/admin/files/cheque" },
+          { label: "Stamp", href: "/admin/files/stamp" },
+          { label: "Insurance", href: "/admin/files/insurance" },
+          { label: "Approval", href: "/admin/files/approval" },
+        ]
+      },
+    ]
+
+    // Add role-specific items
+    if (adminRole === "administrator") {
+      return [
+        ...baseItems,
+        { label: "Transfer Number", href: "/admin/transfer-number" },
+        { label: "Create Admin", href: "/admin/create-admin" },
+      ]
+    }
+
+    // For regular admins, exclude sensitive operations
+    return baseItems
+  }
+
+  const menuItems = getMenuItems()
+
   return (
     <aside className="w-64 bg-white min-h-screen p-6 flex flex-col shadow-lg border-r border-gray-200">
       <div className="flex items-center gap-3 mb-8">
@@ -61,6 +84,15 @@ export function AdminSidebar() {
         <div>
           <h1 className="text-xl font-bold text-gray-800">Admin Panel</h1>
           <p className="text-xs text-gray-500">Financial Services</p>
+          {adminRole && (
+            <span className={`text-xs px-2 py-1 rounded-full mt-1 inline-block ${
+              adminRole === "administrator" 
+                ? "bg-purple-100 text-purple-800" 
+                : "bg-blue-100 text-blue-800"
+            }`}>
+              {adminRole}
+            </span>
+          )}
         </div>
       </div>
 

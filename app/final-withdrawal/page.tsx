@@ -100,16 +100,18 @@ export default function FinalWithdrawalPage() {
       
       const uploadResult = await uploadResponse.json();
       
-      // Save screenshot reference to MongoDB
+      // Save screenshot reference to loans collection in personalInfo field
       const userId = localStorage.getItem("userId");
-      const saveResponse = await fetch('/api/withdrawal-screenshot', {
-        method: 'POST',
+      const saveResponse = await fetch('/api/user/profile', {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'x-user-id': userId || '',
         },
         body: JSON.stringify({
-          screenshotUrl: uploadResult.secure_url,
+          personalInfo: {
+            withdrawalScreenshot: uploadResult.secure_url,
+          }
         }),
       });
       

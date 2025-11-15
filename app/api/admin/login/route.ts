@@ -23,12 +23,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
     }
 
+    // Check if admin has a role, default to "admin" if not set
+    const role = admin.role || "admin"
+
     return NextResponse.json(
       {
         message: "Login successful",
         adminId: admin._id,
         email: admin.email,
         name: admin.name,
+        role: role,
       },
       { status: 200 },
     )

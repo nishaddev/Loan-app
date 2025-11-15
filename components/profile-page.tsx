@@ -17,8 +17,7 @@ import {
   FileBadge,
   Building,
   Landmark,
-  Wallet,
-  Edit3
+  Wallet
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -54,11 +53,6 @@ export function ProfilePage() {
   const [userData, setUserData] = useState<UserData>({})
   const [isLoading, setIsLoading] = useState(true)
   const [activeMenu, setActiveMenu] = useState("ব্যক্তিগত তথ্য")
-  const [bankInfo, setBankInfo] = useState({
-    bankName: "",
-    accountName: "",
-    accountNumber: ""
-  })
   const [isUploading, setIsUploading] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -79,14 +73,6 @@ export function ProfilePage() {
         if (response.ok) {
           const data = await response.json()
           setUserData(data)
-          // Initialize bank info for editing
-          if (data.bankInfo) {
-            setBankInfo({
-              bankName: data.bankInfo.bankName || "",
-              accountName: data.bankInfo.accountName || "",
-              accountNumber: data.bankInfo.accountNumber || ""
-            })
-          }
         }
       } catch (err) {
         console.error("Failed to fetch user data:", err)
@@ -102,52 +88,6 @@ export function ProfilePage() {
     localStorage.removeItem("userId")
     localStorage.removeItem("selectedLoan")
     router.push("/login")
-  }
-
-  const handleBankInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setBankInfo(prev => ({
-      ...prev,
-      [name]: value
-    }))
-  }
-
-  const handleBankInfoSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    try {
-      const userId = localStorage.getItem("userId")
-      if (!userId) return
-
-      const response = await fetch("/api/user/profile", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "x-user-id": userId
-        },
-        body: JSON.stringify({
-          bankInfo: {
-            bankName: bankInfo.bankName,
-            accountName: bankInfo.accountName,
-            accountNumber: bankInfo.accountNumber
-          }
-        })
-      })
-
-      if (response.ok) {
-        // Update local state
-        setUserData(prev => ({
-          ...prev,
-          bankInfo: bankInfo
-        }))
-        toast.success("ব্যাঙ্ক তথ্য সফলভাবে আপডেট হয়েছে")
-      } else {
-        toast.error("ব্যাঙ্ক তথ্য আপডেট করতে ব্যর্থ হয়েছে")
-      }
-    } catch (error) {
-      console.error("Error updating bank info:", error)
-      toast.error("ত্রুটি দেখা দিয়েছে")
-    }
   }
 
   const handleProfileImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -483,14 +423,6 @@ export function ProfilePage() {
               <Card className="p-6 mb-6 bg-white rounded-xl shadow-sm border border-gray-100">
                 <div className="flex justify-between items-center mb-6 pb-2 border-b border-gray-100">
                   <h2 className="text-xl font-semibold text-gray-900">ব্যক্তিগত তথ্য</h2>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => setIsEditModalOpen(true)}
-                  >
-                    <Edit3 className="w-4 h-4 mr-2" />
-                    সম্পাদনা
-                  </Button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
@@ -560,61 +492,26 @@ export function ProfilePage() {
           {activeMenu === "ব্যাঙ্ক একাউন্ট" && (
             <Card className="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
               <h2 className="text-xl font-semibold text-gray-900 mb-6 pb-2 border-b border-gray-100">ব্যাঙ্ক একাউন্ট</h2>
-              <form onSubmit={handleBankInfoSubmit} className="space-y-6">
+              <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="bankName" className="text-sm text-gray-700">ব্যাংকের নাম</Label>
-                      <div className="relative mt-1">
-                        <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <Input
-                          id="bankName"
-                          name="bankName"
-                          value={bankInfo.bankName}
-                          onChange={handleBankInfoChange}
-                          className="pl-10"
-                          placeholder="ব্যাংকের নাম লিখুন"
-                        />
-                      </div>
+                      <p className="text-sm text-gray-500 mb-1">ব্যাংকের নাম</p>
+                      <p className="font-medium text-gray-900">{userData.bankInfo?.bankName || "N/A"}</p>
                     </div>
                     <div>
-                      <Label htmlFor="accountName" className="text-sm text-gray-700">অ্যাকাউন্ট নাম</Label>
-                      <div className="relative mt-1">
-                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <Input
-                          id="accountName"
-                          name="accountName"
-                          value={bankInfo.accountName}
-                          onChange={handleBankInfoChange}
-                          className="pl-10"
-                          placeholder="অ্যাকাউন্ট নাম লিখুন"
-                        />
-                      </div>
+                      <p className="text-sm text-gray-500 mb-1">অ্যাকাউন্ট নাম</p>
+                      <p className="font-medium text-gray-900">{userData.bankInfo?.accountName || "N/A"}</p>
                     </div>
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="accountNumber" className="text-sm text-gray-700">অ্যাকাউন্ট নম্বর</Label>
-                      <div className="relative mt-1">
-                        <Wallet className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <Input
-                          id="accountNumber"
-                          name="accountNumber"
-                          value={bankInfo.accountNumber}
-                          onChange={handleBankInfoChange}
-                          className="pl-10"
-                          placeholder="অ্যাকাউন্ট নম্বর লিখুন"
-                        />
-                      </div>
+                      <p className="text-sm text-gray-500 mb-1">অ্যাকাউন্ট নম্বর</p>
+                      <p className="font-medium text-gray-900">{userData.bankInfo?.accountNumber || "N/A"}</p>
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-end">
-                  <Button type="submit" className="px-6">
-                    আপডেট করুন
-                  </Button>
-                </div>
-              </form>
+              </div>
             </Card>
           )}
 

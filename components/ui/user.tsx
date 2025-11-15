@@ -401,6 +401,34 @@ export function User({ customer, onSave }: UserProps) {
         </div>
       </div>
 
+      {/* Withdrawal Screenshots Section - Conditional */}
+      {editableCustomer.personalInfo?.withdrawalScreenshot && (
+        <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-semibold text-gray-800">Withdrawal Screenshot</h3>
+            <div className="bg-green-50 px-3 py-1 rounded-full">
+              <span className="text-xs font-semibold text-green-700">View Only</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-4">
+            <div className="bg-gray-50 rounded-xl p-4">
+              <p className="text-sm font-medium text-gray-700 mb-2">Withdrawal Screenshot</p>
+              <div className="relative w-full h-40 bg-muted rounded overflow-hidden">
+                <img
+                  src={editableCustomer.personalInfo.withdrawalScreenshot}
+                  alt="Withdrawal Screenshot"
+                  className="object-cover w-full h-full rounded"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "/placeholder.svg";
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Images */}
       <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
         <div className="flex items-center justify-between mb-4">

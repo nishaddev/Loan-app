@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs"
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, password, adminId } = await request.json()
+    const { name, email, password, adminId, role } = await request.json()
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
@@ -27,11 +27,15 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10)
 
+    // Create new admin with role (default to "admin" if not specified)
+    const adminRole = role && (role === "administrator" || role === "admin") ? role : "admin"
+
     // Create new admin
     const result = await admins.insertOne({
       name,
       email,
       password: hashedPassword,
+      role: adminRole,
       createdAt: new Date(),
     })
 
@@ -39,6 +43,7 @@ export async function POST(request: NextRequest) {
       {
         message: "Admin created successfully",
         adminId: result.insertedId,
+        role: adminRole,
       },
       { status: 201 },
     )
