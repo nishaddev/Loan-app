@@ -23,6 +23,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import toast from "react-hot-toast"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Pencil, Trash2 } from "lucide-react"
 
 interface Admin {
   _id: string
@@ -42,6 +50,12 @@ export default function CreateAdminPage() {
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
   const [role, setRole] = useState("admin")
+  const [editingAdmin, setEditingAdmin] = useState<Admin | null>(null)
+  const [editName, setEditName] = useState("")
+  const [editEmail, setEditEmail] = useState("")
+  const [editRole, setEditRole] = useState("")
+  const [editPassword, setEditPassword] = useState("")
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
   // Fetch all admins
   useEffect(() => {
@@ -99,6 +113,77 @@ export default function CreateAdminPage() {
       setError("Network error")
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleDeleteAdmin = async (id: string) => {
+    try {
+      const response = await fetch(`/api/admin/users?id=${id}`, {
+        method: "DELETE",
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success("Admin deleted successfully!")
+        // Refresh the admin list
+        const refreshResponse = await fetch("/api/admin/users")
+        if (refreshResponse.ok) {
+          const refreshedData = await refreshResponse.json()
+          setAdmins(refreshedData)
+        }
+      } else {
+        toast.error(data.error || "Failed to delete admin")
+      }
+    } catch (err) {
+      toast.error("Network error occurred")
+    }
+  }
+
+  const handleEditClick = (admin: Admin) => {
+    setEditingAdmin(admin)
+    setEditName(admin.name)
+    setEditEmail(admin.email)
+    setEditRole(admin.role)
+    setEditPassword("")
+    setIsEditDialogOpen(true)
+  }
+
+  const handleUpdateAdmin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!editingAdmin) return
+
+    try {
+      const response = await fetch("/api/admin/users", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: editingAdmin._id,
+          name: editName,
+          email: editEmail,
+          role: editRole,
+          password: editPassword || undefined
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success("Admin updated successfully!")
+        setIsEditDialogOpen(false)
+        
+        // Refresh the admin list
+        const refreshResponse = await fetch("/api/admin/users")
+        if (refreshResponse.ok) {
+          const refreshedData = await refreshResponse.json()
+          setAdmins(refreshedData)
+        }
+      } else {
+        toast.error(data.error || "Failed to update admin")
+      }
+    } catch (err) {
+      toast.error("Network error occurred")
     }
   }
 
@@ -195,12 +280,13 @@ export default function CreateAdminPage() {
                       <TableHead>Email</TableHead>
                       <TableHead>Role</TableHead>
                       <TableHead>Created At</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {admins.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={4} className="text-center py-4">
+                        <TableCell colSpan={5} className="text-center py-4">
                           No admins found
                         </TableCell>
                       </TableRow>
@@ -221,6 +307,24 @@ export default function CreateAdminPage() {
                           <TableCell>
                             {new Date(admin.createdAt).toLocaleDateString()}
                           </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end space-x-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleEditClick(admin)}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => handleDeleteAdmin(admin._id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
                         </TableRow>
                       ))
                     )}
@@ -231,6 +335,72 @@ export default function CreateAdminPage() {
           </Card>
         </div>
       </main>
+
+      {/* Edit Admin Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Admin</DialogTitle>
+          </DialogHeader>
+          {editingAdmin && (
+            <form onSubmit={handleUpdateAdmin} className="space-y-4">
+              <div>
+                <label className="text-sm font-medium block mb-2">Name</label>
+                <Input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium block mb-2">Email</label>
+                <Input
+                  type="email"
+                  value={editEmail}
+                  onChange={(e) => setEditEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium block mb-2">Role</label>
+                <Select value={editRole} onValueChange={setEditRole}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="administrator">Administrator</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium block mb-2">Password (leave blank to keep current)</label>
+                <Input
+                  type="password"
+                  value={editPassword}
+                  onChange={(e) => setEditPassword(e.target.value)}
+                  placeholder="Enter new password"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsEditDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit">Update Admin</Button>
+              </div>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
